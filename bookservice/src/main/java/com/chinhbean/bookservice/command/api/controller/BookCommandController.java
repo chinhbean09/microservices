@@ -2,6 +2,8 @@ package com.chinhbean.bookservice.command.api.controller;
 
 import java.util.UUID;
 
+import com.chinhbean.bookservice.command.api.command.DeleteBookCommand;
+import com.chinhbean.bookservice.command.api.command.UpdateBookCommand;
 import org.axonframework.commandhandling.gateway.CommandGateway;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,5 +31,15 @@ public class BookCommandController {
 		return "added Book";
 	}
 
-	
+	@PutMapping
+	public String updateBook(@RequestBody BookRequestModel model) {
+		UpdateBookCommand command = new UpdateBookCommand(model.getBookId(), model.getName(), model.getAuthor(),model.getIsReady());
+		commandGateway.sendAndWait(command);
+		return "updated book";
+	}
+	@DeleteMapping("/{bookId}")
+	public String deleteBook(@PathVariable String bookId) {
+		commandGateway.sendAndWait(new DeleteBookCommand(bookId));
+		return "deleted book";
+	}
 }
